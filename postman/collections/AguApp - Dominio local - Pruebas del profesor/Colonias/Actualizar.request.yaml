@@ -1,0 +1,17 @@
+$kind: http-request
+url: "{{urlBase}}/api/colonias/{{coloniaId}}"
+method: PUT
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "municipio_id": {{municipioId}},
+      "nombre": "Colonia prueba Postman actualizado"
+    }
+scripts:
+  - type: afterResponse
+    code: pm.test("Estado 200", () => pm.response.to.have.status(200));
+    language: text/javascript
+order: 4000

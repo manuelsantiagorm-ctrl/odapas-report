@@ -1,0 +1,42 @@
+BEGIN
+SET
+SET
+SET
+CREATE TABLE
+TRUNCATE TABLE
+DO
+SET CONSTRAINTS
+COMMIT
+         tabla         | antes | nuevos | total_actual 
+-----------------------+-------+--------+--------------
+ asignacion_trabajo    |     2 |   2000 |         2002
+ ciudadano             |     1 |   2000 |         2001
+ cobertura_zona        |     5 |   2000 |         2005
+ colonia               |     5 |   2000 |         2005
+ contacto              |     7 |   2000 |         2007
+ direccion             |     4 |   2000 |         2004
+ fotografia_reparacion |     0 |   2000 |         2000
+ fotografia_reporte    |     1 |   2000 |         2001
+ historial_orden       |     1 |   8000 |         8001
+ historial_reporte     |     5 |   4000 |         4005
+ municipios            |     1 |   2000 |         2001
+ notificacion          |    10 |  18000 |        18010
+ orden_trabajo         |     1 |   2000 |         2001
+ persona               |     7 |   2000 |         2007
+ reparacion            |     0 |   2000 |         2000
+ reporte               |     3 |   2000 |         2003
+ reporte_zona          |     3 |   2000 |         2003
+ tipo_reporte          |     3 |   2000 |         2003
+ token_acceso          |     0 |   2000 |         2000
+ trabajador            |     5 |   2000 |         2005
+ trabajador_zona       |     5 |   2000 |         2005
+ usuario               |     7 |   2000 |         2007
+ usuario_rol           |     7 |   4000 |         4007
+ zona                  |     3 |   2000 |         2003
+(24 rows)
+
+ registros_agregados_en_total 
+------------------------------
+                        74000
+(1 row)
+

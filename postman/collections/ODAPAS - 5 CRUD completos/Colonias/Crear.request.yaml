@@ -1,0 +1,19 @@
+$kind: http-request
+url: "{{urlBase}}/api/colonias"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "municipio_id": {{municipioId}},
+      "nombre": "Colonia prueba Postman"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Estado 201", () => pm.response.to.have.status(201));
+      if (pm.response.code === 201) pm.collectionVariables.set("coloniaId", pm.response.json().id);
+    language: text/javascript
+order: 1000

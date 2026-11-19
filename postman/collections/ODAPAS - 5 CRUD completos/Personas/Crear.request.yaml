@@ -1,0 +1,18 @@
+$kind: http-request
+url: "{{urlBase}}/api/personas"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "nombre_completo": "Persona prueba Postman"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Estado 201", () => pm.response.to.have.status(201));
+      if (pm.response.code === 201) pm.collectionVariables.set("personaId", pm.response.json().id);
+    language: text/javascript
+order: 1000

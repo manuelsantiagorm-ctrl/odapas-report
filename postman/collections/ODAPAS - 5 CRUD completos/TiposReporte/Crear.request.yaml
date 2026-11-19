@@ -1,0 +1,19 @@
+$kind: http-request
+url: "{{urlBase}}/api/tipos-reporte"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "codigo": "prueba_postman",
+      "nombre": "Tipo prueba Postman"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Estado 201", () => pm.response.to.have.status(201));
+      if (pm.response.code === 201) pm.collectionVariables.set("tipo_reporteId", pm.response.json().id);
+    language: text/javascript
+order: 1000

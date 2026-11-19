@@ -1,0 +1,10 @@
+$kind: http-request
+url: "{{baseUrl}}/api/colonias/c_centro"
+method: GET
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status 200", () => pm.response.to.have.status(200));
+      pm.test("Es Centro", () => pm.expect(pm.response.json().nombre).to.eql("Centro"));
+    language: text/javascript
+order: 2000

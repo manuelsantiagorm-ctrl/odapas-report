@@ -1,0 +1,15 @@
+ reportes_visibles 
+-------------------
+              2003
+(1 row)
+
+ zonas_visibles 
+----------------
+           2003
+(1 row)
+
+ ordenes_cerradas 
+------------------
+             2000
+(1 row)
+

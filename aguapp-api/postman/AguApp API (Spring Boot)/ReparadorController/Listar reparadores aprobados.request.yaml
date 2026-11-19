@@ -1,0 +1,10 @@
+$kind: http-request
+url: "{{baseUrl}}/api/reparadores"
+method: GET
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Status 200', () => pm.response.to.have.status(200));
+      pm.test('Dos aprobados', () => pm.expect(pm.response.json().length).to.eql(2));
+    language: text/javascript
+order: 1000

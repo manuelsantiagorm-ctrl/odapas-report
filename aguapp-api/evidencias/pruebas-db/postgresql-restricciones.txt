@@ -1,0 +1,98 @@
+BEGIN
+CREATE FUNCTION
+DO
+ esperar_error 
+---------------
+ 
+(1 row)
+
+ esperar_error 
+---------------
+ 
+(1 row)
+
+ esperar_error 
+---------------
+ 
+(1 row)
+
+ esperar_error 
+---------------
+ 
+(1 row)
+
+ esperar_error 
+---------------
+ 
+(1 row)
+
+ esperar_error 
+---------------
+ 
+(1 row)
+
+ esperar_error 
+---------------
+ 
+(1 row)
+
+ esperar_error 
+---------------
+ 
+(1 row)
+
+ esperar_error 
+---------------
+ 
+(1 row)
+
+ esperar_error 
+---------------
+ 
+(1 row)
+
+ esperar_error 
+---------------
+ 
+(1 row)
+
+INSERT 0 1
+INSERT 0 1
+ esperar_error 
+---------------
+ 
+(1 row)
+
+INSERT 0 1
+INSERT 0 1
+ esperar_error 
+---------------
+ 
+(1 row)
+
+ esperar_error 
+---------------
+ 
+(1 row)
+
+INSERT 0 1
+ esperar_error 
+---------------
+ 
+(1 row)
+
+ esperar_error 
+---------------
+ 
+(1 row)
+
+UPDATE 1
+DELETE 1
+DELETE 1
+DO
+ROLLBACK
+                               resultado                               
+-----------------------------------------------------------------------
+ Migraciones y 16 escenarios de rechazo validados; fixtures revertidos
+(1 row)
+

@@ -1,0 +1,18 @@
+$kind: collection
+description: ""
+variables:
+  urlBase: http://aguapp.test:8080
+  token: ""
+  adminEmail: ""
+  adminPassword: ""
+  personaId: ""
+  municipioId: ""
+  coloniaId: ""
+  tipo_reporteId: ""
+  contactoId: ""
+auth:
+  - id: 2005456b-9e25-4461-8c74-2cd05c54c64b
+    type: bearer
+    name: bearer auth
+    credentials:
+      token: "{{token}}"

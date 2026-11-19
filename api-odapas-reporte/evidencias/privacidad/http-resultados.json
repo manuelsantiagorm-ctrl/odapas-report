@@ -1,0 +1,62 @@
+[
+  {
+    "metodo": "GET",
+    "ruta": "/api/publico/documentos",
+    "estado": 200
+  },
+  {
+    "metodo": "GET",
+    "ruta": "/api/publico/colonias",
+    "estado": 200
+  },
+  {
+    "metodo": "POST",
+    "ruta": "/api/auth/registro",
+    "estado": 201
+  },
+  {
+    "metodo": "GET",
+    "ruta": "/api/cuenta",
+    "estado": 200
+  },
+  {
+    "metodo": "PUT",
+    "ruta": "/api/cuenta",
+    "estado": 200
+  },
+  {
+    "metodo": "POST",
+    "ruta": "/api/cuenta/arco",
+    "estado": 201
+  },
+  {
+    "metodo": "GET",
+    "ruta": "/api/cuenta/exportar",
+    "estado": 200
+  },
+  {
+    "metodo": "GET",
+    "ruta": "/api/personas",
+    "estado": 403
+  },
+  {
+    "metodo": "POST",
+    "ruta": "/api/cuenta/baja",
+    "estado": 200
+  },
+  {
+    "metodo": "GET",
+    "ruta": "/api/cuenta",
+    "estado": 401
+  },
+  {
+    "metodo": "POST",
+    "ruta": "/api/auth/login",
+    "estado": 401
+  },
+  {
+    "metodo": "POST",
+    "ruta": "/api/auth/registro",
+    "estado": 201
+  }
+]

@@ -1,0 +1,8 @@
+﻿{
+    "url":  "http://127.0.0.1:18080",
+    "zonas":  3,
+    "reportes":  3,
+    "filtroFugaNorte":  1,
+    "gpsAusente":  true,
+    "folio":  "R-000123"
+}

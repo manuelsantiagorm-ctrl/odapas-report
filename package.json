@@ -1,0 +1,32 @@
+{
+  "name": "aguapp",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "start": "ng serve --open",
+    "start:red": "ng serve --configuration red-local",
+    "build": "ng build",
+    "test": "ng test"
+  },
+  "dependencies": {
+    "@angular/animations": "^17.3.12",
+    "@angular/cdk": "^17.3.10",
+    "@angular/common": "^17.0.0",
+    "@angular/compiler": "^17.0.0",
+    "@angular/core": "^17.0.0",
+    "@angular/forms": "^17.0.0",
+    "@angular/material": "^17.3.10",
+    "@angular/platform-browser": "^17.0.0",
+    "@angular/platform-browser-dynamic": "^17.0.0",
+    "@angular/router": "^17.0.0",
+    "leaflet": "^1.9.4",
+    "zone.js": "^0.14.10"
+  },
+  "devDependencies": {
+    "@angular-devkit/build-angular": "^17.3.17",
+    "@angular/cli": "^17.0.0",
+    "@angular/compiler-cli": "^17.3.12",
+    "@types/leaflet": "^1.9.22",
+    "typescript": "~5.2.0"
+  }
+}

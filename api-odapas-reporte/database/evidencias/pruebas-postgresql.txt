@@ -1,0 +1,161 @@
+BEGIN
+CREATE FUNCTION
+ esperar_error 
+---------------
+ 
+(1 row)
+
+ esperar_error 
+---------------
+ 
+(1 row)
+
+ esperar_error 
+---------------
+ 
+(1 row)
+
+ esperar_error 
+---------------
+ 
+(1 row)
+
+ esperar_error 
+---------------
+ 
+(1 row)
+
+ esperar_error 
+---------------
+ 
+(1 row)
+
+ esperar_error 
+---------------
+ 
+(1 row)
+
+ esperar_error 
+---------------
+ 
+(1 row)
+
+ esperar_error 
+---------------
+ 
+(1 row)
+
+ esperar_error 
+---------------
+ 
+(1 row)
+
+ esperar_error 
+---------------
+ 
+(1 row)
+
+ esperar_error 
+---------------
+ 
+(1 row)
+
+ esperar_error 
+---------------
+ 
+(1 row)
+
+ esperar_error 
+---------------
+ 
+(1 row)
+
+ esperar_error 
+---------------
+ 
+(1 row)
+
+ esperar_error 
+---------------
+ 
+(1 row)
+
+ esperar_error 
+---------------
+ 
+(1 row)
+
+ esperar_error 
+---------------
+ 
+(1 row)
+
+ esperar_error 
+---------------
+ 
+(1 row)
+
+ esperar_error 
+---------------
+ 
+(1 row)
+
+ esperar_error 
+---------------
+ 
+(1 row)
+
+ esperar_error 
+---------------
+ 
+(1 row)
+
+ esperar_error 
+---------------
+ 
+(1 row)
+
+ esperar_error 
+---------------
+ 
+(1 row)
+
+ esperar_error 
+---------------
+ 
+(1 row)
+
+ esperar_error 
+---------------
+ 
+(1 row)
+
+ esperar_error 
+---------------
+ 
+(1 row)
+
+ esperar_error 
+---------------
+ 
+(1 row)
+
+DO
+UPDATE 1
+INSERT 0 1
+DO
+INSERT 0 1
+ esperar_error 
+---------------
+ 
+(1 row)
+
+INSERT 0 1
+DO
+SET CONSTRAINTS
+ROLLBACK
+                                                   resultado                                                    
+----------------------------------------------------------------------------------------------------------------
+ OK: 29 rechazos esperados, 24 tablas, alertas territoriales y flujo de reparación/cierre. Fixtures revertidos.
+(1 row)
+

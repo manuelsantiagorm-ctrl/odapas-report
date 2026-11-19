@@ -1,0 +1,522 @@
+Project AguApp {
+  database_type: 'PostgreSQL'
+  Note: 'Modelo 3FN: ciudadanos, registro de personal y atención de reparaciones. Generado del esquema PostgreSQL probado.'
+}
+
+Table aceptacion_terminos {
+  usuario_id varchar(64) [not null]
+  version_terminos_id varchar(64) [not null]
+  aceptado_en timestamptz [not null, default: `CURRENT_TIMESTAMP`]
+
+  indexes {
+    (usuario_id, version_terminos_id) [pk]
+    version_terminos_id [name: 'idx_aceptacion_version']
+  }
+}
+
+Table asignacion_orden {
+  id varchar(64) [pk]
+  orden_id varchar(64) [not null]
+  reparador_id varchar(64) [not null]
+  cuadrilla_id varchar(64)
+  asignado_por varchar(64) [not null]
+  asignado_en timestamptz [not null, default: `CURRENT_TIMESTAMP`]
+  finalizado_en timestamptz
+  motivo_fin varchar(1000)
+
+  indexes {
+    (orden_id, reparador_id, asignado_en) [unique]
+    asignado_por [name: 'idx_asignacion_autor']
+    cuadrilla_id [name: 'idx_asignacion_cuadrilla']
+    (reparador_id, finalizado_en) [name: 'idx_asignacion_reparador']
+  }
+
+  checks {
+    `(((finalizado_en IS NULL) AND (motivo_fin IS NULL)) OR ((finalizado_en IS NOT NULL) AND (motivo_fin IS NOT NULL) AND (TRIM(BOTH FROM motivo_fin) <> ''::text)))`
+    `((finalizado_en IS NULL) OR (finalizado_en >= asignado_en))`
+  }
+}
+
+Table calendario_suministro {
+  id varchar(64) [pk]
+  colonia_id varchar(64) [not null]
+  fecha date [not null]
+  estado_servicio_codigo varchar(20) [not null]
+
+  indexes {
+    (colonia_id, fecha) [unique]
+    estado_servicio_codigo [name: 'idx_calendario_estado']
+  }
+}
+
+Table ciudadano {
+  usuario_id varchar(64) [pk]
+  colonia_id varchar(64) [not null]
+  referencia_domicilio varchar(500)
+
+  indexes {
+    colonia_id [name: 'idx_ciudadano_colonia']
+  }
+}
+
+Table colonia {
+  id varchar(64) [pk]
+  nombre varchar(120) [not null, unique]
+  estado_servicio_codigo varchar(20) [not null]
+  latitud decimal(9,6)
+  longitud decimal(9,6)
+
+  indexes {
+    estado_servicio_codigo [name: 'idx_colonia_estado']
+  }
+
+  checks {
+    `(((latitud IS NULL) AND (longitud IS NULL)) OR ((latitud IS NOT NULL) AND (longitud IS NOT NULL)))`
+    `((latitud >= ('-90'::integer)::numeric) AND (latitud <= (90)::numeric))`
+    `((longitud >= ('-180'::integer)::numeric) AND (longitud <= (180)::numeric))`
+    `(TRIM(BOTH FROM nombre) <> ''::text)`
+  }
+}
+
+Table consumo_material {
+  reparacion_id varchar(64) [not null]
+  material_id varchar(64) [not null]
+  cantidad decimal(12,3) [not null]
+
+  indexes {
+    (reparacion_id, material_id) [pk]
+    material_id [name: 'idx_consumo_material']
+  }
+
+  checks {
+    `(cantidad > (0)::numeric)`
+  }
+}
+
+Table cuadrilla {
+  id varchar(64) [pk]
+  organismo_id varchar(64) [not null]
+  nombre varchar(100) [not null]
+  activo boolean [not null, default: true]
+
+  indexes {
+    (organismo_id, nombre) [unique]
+  }
+
+  checks {
+    `(TRIM(BOTH FROM nombre) <> ''::text)`
+  }
+}
+
+Table cuadrilla_miembro {
+  id varchar(64) [pk]
+  cuadrilla_id varchar(64) [not null]
+  reparador_id varchar(64) [not null]
+  incorporado_en timestamptz [not null, default: `CURRENT_TIMESTAMP`]
+  retirado_en timestamptz
+
+  indexes {
+    (cuadrilla_id, reparador_id, incorporado_en) [unique]
+    (cuadrilla_id, retirado_en) [name: 'idx_miembro_cuadrilla']
+    (reparador_id, retirado_en) [name: 'idx_miembro_reparador']
+  }
+
+  checks {
+    `((retirado_en IS NULL) OR (retirado_en > incorporado_en))`
+  }
+}
+
+Table empleado {
+  usuario_id varchar(64) [pk]
+  organismo_id varchar(64) [not null]
+  numero_empleado varchar(40) [not null]
+  estado_alta varchar(20) [not null, default: 'pendiente']
+  solicitado_en timestamptz [not null, default: `CURRENT_TIMESTAMP`]
+  resuelto_por varchar(64)
+  resuelto_en timestamptz
+  motivo_rechazo varchar(1000)
+
+  indexes {
+    (organismo_id, numero_empleado) [unique]
+    resuelto_por [name: 'idx_empleado_resolutor']
+  }
+
+  checks {
+    `((((estado_alta)::text = 'pendiente'::text) AND (resuelto_por IS NULL) AND (resuelto_en IS NULL) AND (motivo_rechazo IS NULL)) OR (((estado_alta)::text = 'aprobado'::text) AND (resuelto_por IS NOT NULL) AND (resuelto_en IS NOT NULL) AND (motivo_rechazo IS NULL)) OR (((estado_alta)::text = 'rechazado'::text) AND (resuelto_por IS NOT NULL) AND (resuelto_en IS NOT NULL) AND (motivo_rechazo IS NOT NULL) AND (TRIM(BOTH FROM motivo_rechazo) <> ''::text)))`
+    `((resuelto_en IS NULL) OR (resuelto_en >= solicitado_en))`
+    `((estado_alta)::text = ANY ((ARRAY['pendiente'::character varying, 'aprobado'::character varying, 'rechazado'::character varying])::text[]))`
+    `(TRIM(BOTH FROM numero_empleado) <> ''::text)`
+  }
+}
+
+Table especialidad {
+  codigo varchar(30) [pk]
+  nombre varchar(100) [not null, unique]
+}
+
+Table estado_orden {
+  codigo varchar(30) [pk]
+  nombre varchar(80) [not null, unique]
+}
+
+Table estado_servicio {
+  codigo varchar(20) [pk]
+  nombre varchar(60) [not null, unique]
+}
+
+Table evidencia_reparacion {
+  id varchar(64) [pk]
+  reparacion_id varchar(64) [not null]
+  fase varchar(20) [not null]
+  archivo_url varchar(1024) [not null]
+  nombre_original varchar(255) [not null]
+  mime_type varchar(100) [not null]
+  bytes bigint [not null]
+  creado_en timestamptz [not null, default: `CURRENT_TIMESTAMP`]
+
+  indexes {
+    reparacion_id [name: 'idx_evidencia_reparacion']
+  }
+
+  checks {
+    `(TRIM(BOTH FROM archivo_url) <> ''::text)`
+    `(bytes > 0)`
+    `((fase)::text = ANY ((ARRAY['antes'::character varying, 'durante'::character varying, 'despues'::character varying])::text[]))`
+    `((mime_type)::text ~~ 'image/%'::text)`
+  }
+}
+
+Table evidencia_reporte {
+  id varchar(64) [pk]
+  reporte_id varchar(64) [not null]
+  archivo_url varchar(1024) [not null]
+  nombre_original varchar(255) [not null]
+  mime_type varchar(100) [not null]
+  bytes bigint [not null]
+  creado_en timestamptz [not null, default: `CURRENT_TIMESTAMP`]
+
+  indexes {
+    reporte_id [name: 'idx_evidencia_reporte']
+  }
+
+  checks {
+    `(TRIM(BOTH FROM archivo_url) <> ''::text)`
+    `(bytes > 0)`
+    `((mime_type)::text ~~ 'image/%'::text)`
+  }
+}
+
+Table historial_orden {
+  id varchar(64) [pk]
+  orden_id varchar(64) [not null]
+  secuencia integer [not null]
+  estado_codigo varchar(30) [not null]
+  realizado_por varchar(64) [not null]
+  ocurrido_en timestamptz [not null, default: `CURRENT_TIMESTAMP`]
+  observaciones varchar(4000)
+
+  indexes {
+    (orden_id, secuencia) [unique]
+    realizado_por [name: 'idx_historial_autor']
+    estado_codigo [name: 'idx_historial_estado']
+  }
+
+  checks {
+    `(secuencia > 0)`
+  }
+}
+
+Table material {
+  id varchar(64) [pk]
+  codigo varchar(40) [not null, unique]
+  nombre varchar(180) [not null]
+  unidad_codigo varchar(20) [not null]
+  activo boolean [not null, default: true]
+
+  indexes {
+    unidad_codigo [name: 'idx_material_unidad']
+  }
+
+  checks {
+    `(TRIM(BOTH FROM nombre) <> ''::text)`
+  }
+}
+
+Table orden_trabajo {
+  id varchar(64) [pk]
+  folio varchar(40) [not null, unique]
+  reporte_id varchar(64) [not null]
+  organismo_id varchar(64) [not null]
+  prioridad_codigo varchar(20) [not null]
+  creado_por varchar(64) [not null]
+  descripcion varchar(4000) [not null]
+  fecha_programada date
+  creado_en timestamptz [not null, default: `CURRENT_TIMESTAMP`]
+
+  indexes {
+    creado_por [name: 'idx_orden_creador']
+    (organismo_id, fecha_programada) [name: 'idx_orden_organismo']
+    prioridad_codigo [name: 'idx_orden_prioridad']
+    reporte_id [name: 'idx_orden_reporte']
+  }
+
+  checks {
+    `(TRIM(BOTH FROM descripcion) <> ''::text)`
+    `(TRIM(BOTH FROM folio) <> ''::text)`
+  }
+}
+
+Table organismo {
+  id varchar(64) [pk]
+  nombre varchar(180) [not null]
+  siglas varchar(40) [not null, unique]
+  telefono varchar(30)
+  activo boolean [not null, default: true]
+
+  checks {
+    `(TRIM(BOTH FROM nombre) <> ''::text)`
+    `(TRIM(BOTH FROM siglas) <> ''::text)`
+  }
+}
+
+Table prioridad {
+  codigo varchar(20) [pk]
+  nombre varchar(60) [not null, unique]
+  nivel smallint [not null, unique]
+
+  checks {
+    `(nivel > 0)`
+  }
+}
+
+Table recuperacion_password {
+  id varchar(64) [pk]
+  usuario_id varchar(64) [not null]
+  token_hash varchar(64) [not null, unique]
+  creado_en timestamptz [not null, default: `CURRENT_TIMESTAMP`]
+  expira_en timestamptz [not null]
+  utilizado_en timestamptz
+
+  indexes {
+    usuario_id [name: 'idx_recuperacion_usuario']
+  }
+
+  checks {
+    `(expira_en > creado_en)`
+    `((utilizado_en IS NULL) OR ((utilizado_en >= creado_en) AND (utilizado_en <= expira_en)))`
+    `(length((token_hash)::text) = 64)`
+  }
+}
+
+Table reparacion {
+  id varchar(64) [pk]
+  asignacion_id varchar(64) [not null]
+  diagnostico varchar(4000) [not null]
+  trabajo_realizado varchar(4000)
+  iniciado_en timestamptz [not null, default: `CURRENT_TIMESTAMP`]
+  terminado_en timestamptz
+  resultado_codigo varchar(30)
+
+  indexes {
+    asignacion_id [name: 'idx_reparacion_asignacion']
+    resultado_codigo [name: 'idx_reparacion_resultado']
+  }
+
+  checks {
+    `(((terminado_en IS NULL) AND (resultado_codigo IS NULL)) OR ((terminado_en IS NOT NULL) AND (resultado_codigo IS NOT NULL) AND (trabajo_realizado IS NOT NULL) AND (TRIM(BOTH FROM trabajo_realizado) <> ''::text)))`
+    `((terminado_en IS NULL) OR (terminado_en >= iniciado_en))`
+    `(TRIM(BOTH FROM diagnostico) <> ''::text)`
+  }
+}
+
+Table reparador {
+  usuario_id varchar(64) [pk]
+}
+
+Table reparador_especialidad {
+  reparador_id varchar(64) [not null]
+  especialidad_codigo varchar(30) [not null]
+
+  indexes {
+    (reparador_id, especialidad_codigo) [pk]
+    especialidad_codigo [name: 'idx_especialidad_codigo']
+  }
+}
+
+Table reporte {
+  id varchar(64) [pk]
+  tipo_codigo varchar(20) [not null]
+  usuario_id varchar(64) [not null]
+  colonia_id varchar(64)
+  notas varchar(4000)
+  latitud decimal(9,6)
+  longitud decimal(9,6)
+  creado_en timestamptz [not null, default: `CURRENT_TIMESTAMP`]
+
+  indexes {
+    (colonia_id, creado_en) [name: 'idx_reporte_colonia_fecha']
+    (tipo_codigo, creado_en) [name: 'idx_reporte_tipo_fecha']
+    usuario_id [name: 'idx_reporte_usuario']
+  }
+
+  checks {
+    `(((latitud IS NULL) AND (longitud IS NULL)) OR ((latitud IS NOT NULL) AND (longitud IS NOT NULL)))`
+    `((latitud >= ('-90'::integer)::numeric) AND (latitud <= (90)::numeric))`
+    `((longitud >= ('-180'::integer)::numeric) AND (longitud <= (180)::numeric))`
+  }
+}
+
+Table resultado_reparacion {
+  codigo varchar(30) [pk]
+  nombre varchar(100) [not null, unique]
+}
+
+Table rol {
+  codigo varchar(20) [pk]
+  nombre varchar(80) [not null, unique]
+}
+
+Table tipo_reporte {
+  codigo varchar(20) [pk]
+  nombre varchar(60) [not null, unique]
+}
+
+Table unidad_medida {
+  codigo varchar(20) [pk]
+  nombre varchar(60) [not null, unique]
+}
+
+Table usuario {
+  id varchar(64) [pk]
+  nombre varchar(120) [not null]
+  email varchar(254) [not null, unique]
+  password_hash varchar(255) [not null]
+  creado_en timestamptz [not null, default: `CURRENT_TIMESTAMP`]
+  telefono varchar(30)
+  activo boolean [not null, default: true]
+
+  checks {
+    `(((email)::text = lower(TRIM(BOTH FROM email))) AND ((email)::text <> ''::text))`
+    `(TRIM(BOTH FROM nombre) <> ''::text)`
+    `(TRIM(BOTH FROM password_hash) <> ''::text)`
+  }
+}
+
+Table usuario_rol {
+  usuario_id varchar(64) [not null]
+  rol_codigo varchar(20) [not null]
+  otorgado_por varchar(64)
+  otorgado_en timestamptz [not null, default: `CURRENT_TIMESTAMP`]
+
+  indexes {
+    (usuario_id, rol_codigo) [pk]
+    rol_codigo [name: 'idx_usuario_rol_codigo']
+    otorgado_por [name: 'idx_usuario_rol_otorgante']
+  }
+}
+
+Table verificacion_reporte {
+  reporte_id varchar(64) [pk]
+  verificador_id varchar(64) [not null]
+  verificado_en timestamptz [not null, default: `CURRENT_TIMESTAMP`]
+
+  indexes {
+    verificador_id [name: 'idx_verificacion_usuario']
+  }
+}
+
+Table version_terminos {
+  id varchar(64) [pk]
+  version varchar(40) [not null, unique]
+  documento_url varchar(1024) [not null]
+  publicado_en timestamptz [not null]
+}
+
+// Relaciones: > muchos a uno; - uno a uno (perfiles opcionales).
+Ref: aceptacion_terminos.usuario_id > usuario.id
+Ref: aceptacion_terminos.version_terminos_id > version_terminos.id
+Ref: asignacion_orden.asignado_por > usuario.id
+Ref: asignacion_orden.cuadrilla_id > cuadrilla.id
+Ref: asignacion_orden.orden_id > orden_trabajo.id
+Ref: asignacion_orden.reparador_id > reparador.usuario_id
+Ref: calendario_suministro.colonia_id > colonia.id
+Ref: calendario_suministro.estado_servicio_codigo > estado_servicio.codigo
+Ref: ciudadano.colonia_id > colonia.id
+Ref: usuario.id - ciudadano.usuario_id
+Ref: colonia.estado_servicio_codigo > estado_servicio.codigo
+Ref: consumo_material.material_id > material.id
+Ref: consumo_material.reparacion_id > reparacion.id
+Ref: cuadrilla.organismo_id > organismo.id
+Ref: cuadrilla_miembro.cuadrilla_id > cuadrilla.id
+Ref: cuadrilla_miembro.reparador_id > reparador.usuario_id
+Ref: empleado.organismo_id > organismo.id
+Ref: empleado.resuelto_por > usuario.id
+Ref: usuario.id - empleado.usuario_id
+Ref: evidencia_reparacion.reparacion_id > reparacion.id
+Ref: evidencia_reporte.reporte_id > reporte.id [delete: cascade]
+Ref: historial_orden.estado_codigo > estado_orden.codigo
+Ref: historial_orden.orden_id > orden_trabajo.id
+Ref: historial_orden.realizado_por > usuario.id
+Ref: material.unidad_codigo > unidad_medida.codigo
+Ref: orden_trabajo.creado_por > usuario.id
+Ref: orden_trabajo.organismo_id > organismo.id
+Ref: orden_trabajo.prioridad_codigo > prioridad.codigo
+Ref: orden_trabajo.reporte_id > reporte.id
+Ref: recuperacion_password.usuario_id > usuario.id [delete: cascade]
+Ref: reparacion.asignacion_id > asignacion_orden.id
+Ref: reparacion.resultado_codigo > resultado_reparacion.codigo
+Ref: empleado.usuario_id - reparador.usuario_id
+Ref: reparador_especialidad.especialidad_codigo > especialidad.codigo
+Ref: reparador_especialidad.reparador_id > reparador.usuario_id
+Ref: reporte.colonia_id > colonia.id
+Ref: reporte.tipo_codigo > tipo_reporte.codigo
+Ref: reporte.usuario_id > usuario.id
+Ref: usuario_rol.otorgado_por > usuario.id
+Ref: usuario_rol.rol_codigo > rol.codigo
+Ref: usuario_rol.usuario_id > usuario.id
+Ref: reporte.id - verificacion_reporte.reporte_id [delete: cascade]
+Ref: verificacion_reporte.verificador_id > usuario.id
+
+TableGroup Identidad_y_registro {
+  usuario
+  rol
+  usuario_rol
+  ciudadano
+  organismo
+  empleado
+  reparador
+  especialidad
+  reparador_especialidad
+  version_terminos
+  aceptacion_terminos
+  recuperacion_password
+}
+
+TableGroup Suministro {
+  colonia
+  estado_servicio
+  calendario_suministro
+}
+
+TableGroup Reportes_ciudadanos {
+  tipo_reporte
+  reporte
+  verificacion_reporte
+  evidencia_reporte
+}
+
+TableGroup Atencion_y_reparaciones {
+  cuadrilla
+  cuadrilla_miembro
+  prioridad
+  estado_orden
+  orden_trabajo
+  asignacion_orden
+  resultado_reparacion
+  reparacion
+  evidencia_reparacion
+  unidad_medida
+  material
+  consumo_material
+  historial_orden
+}

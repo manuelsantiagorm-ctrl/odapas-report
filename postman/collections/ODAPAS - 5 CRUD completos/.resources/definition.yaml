@@ -1,0 +1,6 @@
+$kind: collection
+description: ""
+variables:
+  urlBase: http://localhost:8080
+  personaId: ""
+  municipioId: ""

@@ -1,0 +1,12 @@
+$kind: http-request
+url: "{{urlBase}}/api/reportes?tipo=fuga"
+method: GET
+queryParams:
+  tipo: fuga
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Estado 200", () => pm.response.to.have.status(200));
+      pm.test("Respuesta JSON", () => pm.response.json());
+    language: text/javascript
+order: 5000

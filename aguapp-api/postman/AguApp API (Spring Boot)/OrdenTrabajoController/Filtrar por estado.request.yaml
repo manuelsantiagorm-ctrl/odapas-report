@@ -1,0 +1,10 @@
+$kind: http-request
+url: "{{baseUrl}}/api/ordenes-trabajo?estado=reparada"
+method: GET
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Status 200', () => pm.response.to.have.status(200));
+      pm.test('Solo reparadas', () => pm.response.json().forEach(o => pm.expect(o.estado).to.eql('reparada')));
+    language: text/javascript
+order: 5000

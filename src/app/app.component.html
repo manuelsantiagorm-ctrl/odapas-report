@@ -1,0 +1,62 @@
+<a class="saltar" href="#contenido">Saltar al contenido</a>
+<!-- Un solo router-outlet: así las pantallas no se reinician al iniciar o cerrar sesión. -->
+<div [class.marco]="!!s" [class.menu-abierto]="menuAbierto">
+  @if (s) {
+    <aside class="lateral" aria-label="Menú principal">
+      <a class="marca" [routerLink]="sesion.inicio"><img src="assets/logo.svg" alt="" width="34" height="34"><span>ODAPAS <b>Report</b></span></a>
+      <nav>
+        @if (sesion.tiene('administrador')) {
+          <p class="grupo">Administración</p>
+          @for (e of admin; track e.ruta) { <a [routerLink]="e.ruta" routerLinkActive="activo" [routerLinkActiveOptions]="{ exact: !!e.exacta }">{{ e.texto }}</a> }
+        }
+        @if (sesion.tiene('trabajador')) {
+          <p class="grupo">Trabajo de campo</p>
+          @for (e of trabajador; track e.ruta) { <a [routerLink]="e.ruta" routerLinkActive="activo">{{ e.texto }}</a> }
+        }
+        @if (sesion.tiene('ciudadano')) {
+          <p class="grupo">Mis reportes</p>
+          @for (e of ciudadano; track e.ruta) { <a [routerLink]="e.ruta" routerLinkActive="activo">{{ e.texto }}</a> }
+        }
+        <p class="grupo">General</p>
+        <a routerLink="/" routerLinkActive="activo" [routerLinkActiveOptions]="{ exact: true }">Mapa público</a>
+        <a routerLink="/avisos" routerLinkActive="activo">Avisos @if (noLeidas) { <span class="globo" [attr.aria-label]="noLeidas + ' sin leer'">{{ noLeidas }}</span> }</a>
+        <a routerLink="/cuenta" routerLinkActive="activo">Mi cuenta</a>
+      </nav>
+      <div class="yo">
+        <span class="avatar" aria-hidden="true">{{ iniciales }}</span>
+        <span><strong>{{ s.user.name }}</strong><small>{{ s.user.email }}</small></span>
+        <button type="button" class="enlace" (click)="salir()">Salir</button>
+      </div>
+    </aside>
+    <header class="barra-movil">
+      <button type="button" class="hamburguesa" (click)="menuAbierto = !menuAbierto" [attr.aria-expanded]="menuAbierto" aria-label="Abrir menú"><span></span></button>
+      <a class="marca" [routerLink]="sesion.inicio"><img src="assets/logo.svg" alt="" width="28" height="28"><span>ODAPAS <b>Report</b></span></a>
+      <a routerLink="/avisos" class="campana" aria-label="Avisos">Avisos @if (noLeidas) { <span class="globo">{{ noLeidas }}</span> }</a>
+    </header>
+    <div class="velo" (click)="menuAbierto = false" aria-hidden="true"></div>
+  } @else {
+    <header class="cabecera-publica">
+      <a class="marca" routerLink="/"><img src="assets/logo.svg" alt="" width="34" height="34"><span>ODAPAS <b>Report</b></span></a>
+      <nav><a routerLink="/entrar" class="enlace-nav">Entrar</a><a routerLink="/registro" class="boton">Crear cuenta</a></nav>
+    </header>
+  }
+  <main id="contenido" [class.contenido]="!!s" [class.publico]="!s"><router-outlet /></main>
+  @if (s && sesion.tiene('ciudadano') && !sesion.tiene('administrador') && !sesion.tiene('trabajador')) {
+    <nav class="tabs-movil" aria-label="Accesos rápidos">
+      <a routerLink="/mis-reportes" routerLinkActive="activo">Mis reportes</a>
+      <a routerLink="/nuevo-reporte" routerLinkActive="activo" class="principal">Reportar</a>
+      <a routerLink="/cuenta" routerLinkActive="activo">Cuenta</a>
+    </nav>
+  }
+  @if (!s) {
+    <footer class="pie-publico">
+      <p>Organismo de Agua Potable, Alcantarillado y Saneamiento. Proyecto escolar de AquaTech Dev.</p>
+      <p><a routerLink="/legal/privacidad">Aviso de privacidad</a> <a routerLink="/legal/terminos">Términos y condiciones</a></p>
+    </footer>
+  }
+</div>
+<div class="mensajes" aria-live="polite">
+  @for (m of avisos.mensajes; track m.id) {
+    <div class="mensaje" [attr.data-tipo]="m.tipo" role="status"><span>{{ m.texto }}</span><button type="button" (click)="avisos.cerrar(m.id)" aria-label="Cerrar">×</button></div>
+  }
+</div>

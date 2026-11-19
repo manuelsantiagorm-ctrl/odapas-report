@@ -1,0 +1,20 @@
+$kind: http-request
+url: "{{urlBase}}/api/contactos"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "persona_id": {{personaId}},
+      "correo": "prueba.postman@example.com",
+      "telefono": "5512345678"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Estado 201", () => pm.response.to.have.status(201));
+      if (pm.response.code === 201) pm.collectionVariables.set("contactoId", pm.response.json().id);
+    language: text/javascript
+order: 1000

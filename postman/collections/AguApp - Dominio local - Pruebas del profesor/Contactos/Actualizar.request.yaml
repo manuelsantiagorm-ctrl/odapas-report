@@ -1,0 +1,18 @@
+$kind: http-request
+url: "{{urlBase}}/api/contactos/{{contactoId}}"
+method: PUT
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "persona_id": {{personaId}},
+      "correo": "prueba.postman@example.com",
+      "telefono": "5598765432"
+    }
+scripts:
+  - type: afterResponse
+    code: pm.test("Estado 200", () => pm.response.to.have.status(200));
+    language: text/javascript
+order: 4000

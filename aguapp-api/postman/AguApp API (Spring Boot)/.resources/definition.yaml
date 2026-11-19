@@ -1,0 +1,4 @@
+$kind: collection
+description: "Cuatro controllers de consulta JDBC: colonias, reportes, reparadores aprobados y órdenes de trabajo. Usar una base demo con migraciones V1 a V5."
+variables:
+  baseUrl: http://localhost:8080

@@ -1,0 +1,4 @@
+$kind: collection
+description: "Pruebas GET de los 2 controladores: ControladorZonas (/api/zonas) y ControladorReportes (/api/reportes)."
+variables:
+  urlBase: http://localhost:8080

@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: mx.odapas.reporte.PruebasPrivacidad
+-------------------------------------------------------------------------------
+Tests run: 11, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.463 s -- in mx.odapas.reporte.PruebasPrivacidad

@@ -1,0 +1,588 @@
+{
+  "info": {
+    "name": "ODAPAS - Cuenta y derechos ARCO",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "urlBase",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "passwordPrueba",
+      "value": "PruebaEscolar123!"
+    },
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "correoPrueba",
+      "value": ""
+    },
+    {
+      "key": "coloniaId",
+      "value": ""
+    },
+    {
+      "key": "version",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "01 Documentos legales",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": "{{urlBase}}/api/publico/documentos"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Estado 200\",()=>pm.response.to.have.status(200));",
+              "pm.collectionVariables.set('version',pm.response.json().version);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "02 Colonias disponibles",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": "{{urlBase}}/api/publico/colonias"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Estado 200\",()=>pm.response.to.have.status(200));",
+              "pm.collectionVariables.set('coloniaId',pm.response.json()[0].id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "03 Registrar ciudadano de prueba",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{urlBase}}/api/auth/registro",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Persona prueba ARCO\",\n  \"email\": \"{{correoPrueba}}\",\n  \"password\": \"{{passwordPrueba}}\",\n  \"telefono\": \"5512345678\",\n  \"coloniaId\": {{coloniaId}},\n  \"calle\": \"Calle de prueba\",\n  \"numeroExterior\": \"10\",\n  \"codigoPostal\": \"55000\",\n  \"terms\": true,\n  \"privacy\": true,\n  \"opcionales\": false,\n  \"version\": \"{{version}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Estado 201\",()=>pm.response.to.have.status(201));",
+              "if(pm.response.code < 300) pm.collectionVariables.set('token',pm.response.json().token);"
+            ]
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.collectionVariables.set('correoPrueba','arco-'+Date.now()+'@example.com');"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "04 Iniciar sesión",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{urlBase}}/api/auth/login",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"{{correoPrueba}}\",\n  \"password\": \"{{passwordPrueba}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Estado 200\",()=>pm.response.to.have.status(200));",
+              "if(pm.response.code < 300) pm.collectionVariables.set('token',pm.response.json().token);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "05 Consultar mi perfil",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": "{{urlBase}}/api/cuenta"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Estado 200\",()=>pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "06 Rectificar mis datos",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{urlBase}}/api/cuenta",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Persona con nombre corregido\",\n  \"email\": \"{{correoPrueba}}\",\n  \"password\": \"{{passwordPrueba}}\",\n  \"telefono\": \"5512345678\",\n  \"coloniaId\": {{coloniaId}},\n  \"calle\": \"Calle de prueba\",\n  \"numeroExterior\": \"10\",\n  \"codigoPostal\": \"55000\",\n  \"terms\": true,\n  \"privacy\": true,\n  \"opcionales\": false,\n  \"version\": \"{{version}}\",\n  \"passwordActual\": \"{{passwordPrueba}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Estado 200\",()=>pm.response.to.have.status(200));",
+              "pm.test('Nombre corregido',()=>pm.expect(pm.response.json().name).to.eql('Persona con nombre corregido'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "07 Descargar mis datos",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": "{{urlBase}}/api/cuenta/exportar"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Estado 200\",()=>pm.response.to.have.status(200));",
+              "pm.test('No expone hash',()=>pm.expect(pm.response.json().perfil).not.to.have.property('password_hash'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "08 Retirar comunicaciones opcionales",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{urlBase}}/api/cuenta/preferencias",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"opcionales\": false\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Estado 200\",()=>pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "09 Solicitud ARCO - acceso",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{urlBase}}/api/cuenta/arco",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"tipo\": \"acceso\",\n  \"detalle\": \"Solicitud escolar de acceso. Revisar mis datos personales.\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Estado 201\",()=>pm.response.to.have.status(201));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "09 Solicitud ARCO - rectificacion",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{urlBase}}/api/cuenta/arco",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"tipo\": \"rectificacion\",\n  \"detalle\": \"Solicitud escolar de rectificacion. Revisar mis datos personales.\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Estado 201\",()=>pm.response.to.have.status(201));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "09 Solicitud ARCO - oposicion",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{urlBase}}/api/cuenta/arco",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"tipo\": \"oposicion\",\n  \"detalle\": \"Solicitud escolar de oposicion. Revisar mis datos personales.\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Estado 201\",()=>pm.response.to.have.status(201));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "09 Solicitud ARCO - cancelacion",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{urlBase}}/api/cuenta/arco",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"tipo\": \"cancelacion\",\n  \"detalle\": \"Solicitud escolar de cancelacion. Revisar mis datos personales.\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Estado 201\",()=>pm.response.to.have.status(201));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "10 Consultar mis solicitudes",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": "{{urlBase}}/api/cuenta/arco"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Estado 200\",()=>pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "11 Ciudadano no puede listar personas ajenas",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": "{{urlBase}}/api/personas"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Estado 403\",()=>pm.response.to.have.status(403));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "12 Darme de baja (final)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{urlBase}}/api/cuenta/baja",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"passwordActual\": \"{{passwordPrueba}}\",\n  \"confirmar\": true\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Estado 200\",()=>pm.response.to.have.status(200));",
+              "pm.collectionVariables.set('folioBaja',pm.response.json().folio);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "13 Sesión revocada tras baja",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": "{{urlBase}}/api/cuenta"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Estado 401\",()=>pm.response.to.have.status(401));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "14 Cuenta de baja no puede iniciar sesión",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{urlBase}}/api/auth/login",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"{{correoPrueba}}\",\n  \"password\": \"{{passwordPrueba}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Estado 401\",()=>pm.response.to.have.status(401));"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

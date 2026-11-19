@@ -1,0 +1,8 @@
+$kind: http-request
+url: "{{urlBase}}/api/zonas/XX"
+method: GET
+scripts:
+  - type: afterResponse
+    code: pm.test("Respuesta con estado 404", () => pm.response.to.have.status(404));
+    language: text/javascript
+order: 3000

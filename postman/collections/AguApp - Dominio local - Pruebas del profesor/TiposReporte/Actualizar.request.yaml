@@ -1,0 +1,17 @@
+$kind: http-request
+url: "{{urlBase}}/api/tipos-reporte/{{tipo_reporteId}}"
+method: PUT
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "codigo": "prueba_postman",
+      "nombre": "Tipo prueba Postman actualizado"
+    }
+scripts:
+  - type: afterResponse
+    code: pm.test("Estado 200", () => pm.response.to.have.status(200));
+    language: text/javascript
+order: 4000

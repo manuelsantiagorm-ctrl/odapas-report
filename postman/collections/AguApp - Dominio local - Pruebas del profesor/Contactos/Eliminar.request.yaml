@@ -1,0 +1,8 @@
+$kind: http-request
+url: "{{urlBase}}/api/contactos/{{contactoId}}"
+method: DELETE
+scripts:
+  - type: afterResponse
+    code: pm.test("Estado 204", () => pm.response.to.have.status(204));
+    language: text/javascript
+order: 5000

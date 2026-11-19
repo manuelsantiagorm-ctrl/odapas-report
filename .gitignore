@@ -1,0 +1,81 @@
+# See https://docs.github.com/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
+
+# Compiled output
+/dist
+/tmp
+/out-tsc
+/bazel-out
+
+# Node
+/node_modules
+npm-debug.log
+yarn-error.log
+
+# IDEs and editors
+.idea/
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# Visual Studio Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/*
+
+# Miscellaneous
+/.angular/cache
+.sass-cache/
+/connect.lock
+/coverage
+/libpeerconnection.log
+testem.log
+/typings
+
+# System files
+.db-validation/
+.DS_Store
+Thumbs.db
+.git/
+venv/
+.venv/
+.runtime/
+env/
+node_modules/
+__pycache__/
+*.pyc
+.env
+.env.*
+!.env.example
+!.env.*.example
+*.pem
+*.key
+*.p12
+*.sql
+*.sqlite3
+*.db
+*.dump
+*.tar.gz
+*.tgz
+*.zip
+*.log
+backups/
+_backups_pakivox/
+logs/
+staticfiles/
+media/
+dist/
+.angular/
+Claude outputs/
+_to_delete/
+admins_passwords.csv
+deploy_secrets*
+ngrok*.yml
+.vscode/
+.idea/
+.local/
